@@ -51,28 +51,28 @@
                   db="superset"
   tags: createuser
 
-- name: create {{ env }}_consumer-channel-mapping
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_consumer_channel_mapping(consumer_id text, channel text, status smallint, created_by text, created_on timestamptz, updated_on timestamptz, PRIMARY KEY(consumer_id, channel))"
+- name: create preprod_consumer-channel-mapping
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_consumer_channel_mapping(consumer_id text, channel text, status smallint, created_by text, created_on timestamptz, updated_on timestamptz, PRIMARY KEY(consumer_id, channel))"
   run_once: true
   tags: create
 
-- name: update {{ env }}_consumer_channel_mapping
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "insert into {{ env }}_consumer_channel_mapping (consumer_id, channel, status, created_by, created_on, updated_on) values ('{{ consumer_id }}', '{{ channel }}', {{ status }}, '{{created_by }}', current_timestamp, current_timestamp) on conflict on constraint {{ env }}_consumer_channel_mapping_pkey DO UPDATE set status=EXCLUDED.status, updated_on= current_timestamp"
+- name: update preprod_consumer_channel_mapping
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "insert into preprod_consumer_channel_mapping (consumer_id, channel, status, created_by, created_on, updated_on) values ('{{ consumer_id }}', '{{ channel }}', {{ status }}, '{{created_by }}', current_timestamp, current_timestamp) on conflict on constraint preprod_consumer_channel_mapping_pkey DO UPDATE set status=EXCLUDED.status, updated_on= current_timestamp"
   run_once: true
   tags: insert
 
-- name: create {{ env }}_device_profile
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_device_profile(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz, PRIMARY KEY(device_id))"
+- name: create preprod_device_profile
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_device_profile(device_id text, api_last_updated_on timestamptz, avg_ts float, city text, country text, country_code text, device_spec json, district_custom text, fcm_token text, first_access timestamptz, last_access timestamptz, producer_id text, state text, state_code text, state_code_custom text, state_custom text, total_launches bigint, total_ts float, uaspec json, updated_date timestamptz, user_declared_district text, user_declared_state text, user_declared_on timestamptz, PRIMARY KEY(device_id))"
   run_once: true
   tags: create
 
-- name: create {{ env }}_report_config
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_report_config(report_id text, updated_on timestamptz,report_description text,requested_by text,report_schedule text,config json,created_on timestamptz,submitted_on timestamptz,status text,status_msg text,PRIMARY KEY(report_id))"
+- name: create preprod_report_config
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_report_config(report_id text, updated_on timestamptz,report_description text,requested_by text,report_schedule text,config json,created_on timestamptz,submitted_on timestamptz,status text,status_msg text,PRIMARY KEY(report_id))"
   run_once: true
   tags: create
 
-- name: update {{ env }}_report_config
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_report_config ADD COLUMN IF NOT EXISTS batch_number INTEGER"
+- name: update preprod_report_config
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE preprod_report_config ADD COLUMN IF NOT EXISTS batch_number INTEGER"
   run_once: true
   tags: update  
 
@@ -86,8 +86,8 @@
   run_once: true
   tags: create
 
-- name: create {{ env }}_consumer-channel-mapping
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from {{ env }}_consumer_channel_mapping"
+- name: create preprod_consumer-channel-mapping
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "select * from preprod_consumer_channel_mapping"
   run_once: true
   tags: select
 
@@ -96,33 +96,33 @@
   run_once: true
   tags: create
 
-- name: create {{ env }}_job_request
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_job_request(tag VARCHAR(100), request_id VARCHAR(50), job_id VARCHAR(50), status VARCHAR(50), request_data json, requested_by VARCHAR(50), requested_channel VARCHAR(50), dt_job_submitted TIMESTAMP, download_urls text[], dt_file_created TIMESTAMP, dt_job_completed TIMESTAMP, execution_time INTEGER, err_message VARCHAR(300), iteration INTEGER, encryption_key VARCHAR(50), PRIMARY KEY (tag, request_id))"
+- name: create preprod_job_request
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_job_request(tag VARCHAR(100), request_id VARCHAR(50), job_id VARCHAR(50), status VARCHAR(50), request_data json, requested_by VARCHAR(50), requested_channel VARCHAR(50), dt_job_submitted TIMESTAMP, download_urls text[], dt_file_created TIMESTAMP, dt_job_completed TIMESTAMP, execution_time INTEGER, err_message VARCHAR(300), iteration INTEGER, encryption_key VARCHAR(50), PRIMARY KEY (tag, request_id))"
   run_once: true
   tags: create
 
-- name: update {{ env }}_job_request
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_job_request ADD COLUMN IF NOT EXISTS batch_number INTEGER"
+- name: update preprod_job_request
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE preprod_job_request ADD COLUMN IF NOT EXISTS batch_number INTEGER"
   run_once: true
   tags: update
 
-- name: update {{ env }}_job_request
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_job_request ADD COLUMN IF NOT EXISTS processed_batches text"
+- name: update preprod_job_request
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE preprod_job_request ADD COLUMN IF NOT EXISTS processed_batches text"
   run_once: true
   tags: update      
 
-- name: create {{ env }}_experiment_definition
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_experiment_definition (exp_id VARCHAR(50), created_by VARCHAR(50), created_on TIMESTAMP, criteria VARCHAR(100), exp_data VARCHAR(300), exp_description VARCHAR(200), exp_name VARCHAR(50), stats VARCHAR(300), status VARCHAR(50), status_message VARCHAR(50), updated_by VARCHAR(50), updated_on TIMESTAMP, PRIMARY KEY(exp_id))"
+- name: create preprod_experiment_definition
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_experiment_definition (exp_id VARCHAR(50), created_by VARCHAR(50), created_on TIMESTAMP, criteria VARCHAR(100), exp_data VARCHAR(300), exp_description VARCHAR(200), exp_name VARCHAR(50), stats VARCHAR(300), status VARCHAR(50), status_message VARCHAR(50), updated_by VARCHAR(50), updated_on TIMESTAMP, PRIMARY KEY(exp_id))"
   run_once: true
   tags: create  
 
-- name: create {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS {{ env }}_dataset_metadata(dataset_id VARCHAR(50), dataset_sub_id VARCHAR(150), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, validation_json json, druid_query json, limits json, supported_formats text[], exhaust_type VARCHAR(50), PRIMARY KEY (dataset_id, dataset_sub_id))"
+- name: create preprod_dataset_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "CREATE TABLE IF NOT EXISTS preprod_dataset_metadata(dataset_id VARCHAR(50), dataset_sub_id VARCHAR(150), dataset_config json, visibility VARCHAR(50), dataset_type VARCHAR(50), version VARCHAR(10), authorized_roles text[], available_from TIMESTAMP, sample_request text, sample_response text, validation_json json, druid_query json, limits json, supported_formats text[], exhaust_type VARCHAR(50), PRIMARY KEY (dataset_id, dataset_sub_id))"
   run_once: true
   tags: update
 
-- name: update {{ env }}_dataset_metadata
-  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE {{ env }}_dataset_metadata ALTER COLUMN dataset_sub_id TYPE VARCHAR(150)"
+- name: update preprod_dataset_metadata
+  shell: PGPASSWORD="{{ postgres.db_password }}" psql -U "{{ postgres.db_username }}" -d "{{ postgres.db_name }}" -h "{{ postgres.db_url }}" -p "{{ postgres.db_port }}" -c "ALTER TABLE preprod_dataset_metadata ALTER COLUMN dataset_sub_id TYPE VARCHAR(150)"
   run_once: true
   tags: update
 
